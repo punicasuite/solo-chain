@@ -34,7 +34,7 @@ txDB.ensureIndex({ fieldName: 'hash', unique: true }, function (err) {
     console.log(err)
 });
 
-scDB.ensureIndex({ fieldName: 'txhash', unique: true }, function (err) {
+scDB.ensureIndex({ fieldName: 'contractHash', unique: true }, function (err) {
     console.log(err)
 });
 
@@ -85,6 +85,18 @@ const dbInsert = (db, doc) => {
     })
 }
 
+const dbRemove = (db, query, opt = {multi: true}) => {
+    return new Promise((resolve, reject) => {
+        db.remove(query, opt, function(err, numRemoved) {
+            if(err) {
+                reject(err)
+            } else {
+                resolve(numRemoved)
+            }
+        })
+    })
+}
+
 const dbUpsert = (db, index, doc) => {
     return new Promise((resolve, reject) => {
         db.update({ [index]: doc.indexKey }, doc, { upsert: true }, function (err, numReplaced, upsert) {
@@ -104,5 +116,6 @@ export {
     scDB,
     dbFind, 
     dbInsert, 
-    dbUpsert 
+    dbUpsert,
+    dbRemove
 };

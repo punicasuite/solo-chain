@@ -12,7 +12,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/'
+      redirect: '/accounts'
     },
     {
       path: '/transactions',
@@ -33,6 +33,11 @@ export default new Router({
       path: '/scs',
       name: 'ScList',
       component: require('@/components/ScList').default
+    },
+    {
+      path: '/logs',
+      name: 'Logs',
+      component: require('@/components/Logs').default
     },
   ]
 })

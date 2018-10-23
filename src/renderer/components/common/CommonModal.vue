@@ -5,7 +5,7 @@
 <template>
     <div>
         <a-modal
-            title="Title"
+            :title="title"
             v-model="visible"
             @ok="handleOk"
             @cancel="handleCancel"
@@ -19,7 +19,7 @@
 import {mapState} from 'vuex'
 export default {
     name: 'CommonModal',
-    props:['modalId'],
+    props:['modalId', 'title'],
     computed:{
        ...mapState({
            visible: state => state.CommonModal.visible
@@ -30,6 +30,7 @@ export default {
             this.$store.commit('HIDE_COMMON_MODAL', {modalId: this.modalId})
         },
         handleOk() {
+            this.$store.commit('HIDE_COMMON_MODAL')
             this.$emit('modalOk', this.modalId)
         }
     }

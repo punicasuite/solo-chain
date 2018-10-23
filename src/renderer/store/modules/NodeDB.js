@@ -79,6 +79,29 @@ const actions = {
         commit('UPDATE_SC_LIST', { list: docs })
         return docs;
     },
+    removeDB({dispatch, commit}) {
+        const query = {}, opt = {multi:true};
+        dispatch('removeBlockDB', {query, opt});
+        dispatch('removeEventDB', { query, opt });
+        dispatch('removeScDB', { query, opt });
+        dispatch('removeTxDB', { query, opt });
+    },
+    async removeBlockDB({}, {query, opt}) {
+        const res = await DB.dbRemove(DB.blockDB, query, opt);
+        return res;
+    },
+    async removeEventDB({}, {query, opt}) {
+        const res = await DB.dbRemove(DB.eventDB, query, opt);
+        return res;
+    },
+    async removeScDB({ }, { query, opt }) {
+        const res = await DB.dbRemove(DB.scDB, query, opt);
+        return res;
+    },
+    async removeTxDB({ }, { query, opt }) {
+        const res = await DB.dbRemove(DB.txDB, query, opt);
+        return res;
+    }
 }
 
 export default {

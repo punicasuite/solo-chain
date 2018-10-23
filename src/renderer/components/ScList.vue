@@ -17,26 +17,49 @@
             </div>
             </a-table>
         </div>
-
+    <common-modal modalId="modal1"  title="Block detail" >
+      <json-viewer :value="json"></json-viewer>
+    </common-modal>
     </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
+import CommonModal from './common/CommonModal' 
 const columns = [
     {
-        title: 'TxHash',
-        dataIndex: 'hash'
+        title: 'Contract Hash',
+        dataIndex: 'contractHash'
     },
     {
-        title: 'height',
-        dataIndex: 'height'
+        title: 'Contract Name',
+        dataIndex: 'name'
     },
     {
-        title: '',
-        key: 'action',
-        scopedSlots: {customRender:'action'}
-    }
+        title: 'Version',
+        dataIndex: 'version'
+    },
+    {
+        title: 'Author',
+        dataIndex: 'author'
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email'
+    },
+    {
+        title: 'Need storage',
+        dataIndex: 'needStorage'
+    },
+    {
+        title: 'Description',
+        dataIndex: 'desc'
+    },
+    // {
+    //     title: '',
+    //     key: 'action',
+    //     scopedSlots: {customRender:'action'}
+    // }
 ]
 export default {
     name: 'ScList',
@@ -49,7 +72,11 @@ export default {
             },
             loading: false,
             columns,
+            json: ''
         }
+    },
+    components: {
+        CommonModal
     },
     mounted(){
         this.$store.dispatch('fetchScTotal').then(res => {
@@ -65,6 +92,8 @@ export default {
     methods: {
         showDetail(record){
             console.log(record.json)
+            this.json = record.json
+            this.$store.commit('SHOW_COMMON_MODAL')
         },
         handleTableChange(pagination, filters, sorter) {
             console.log(pagination)

@@ -12,15 +12,20 @@
             @change="handleTableChange"
         >
         <div slot="action" slot-scope="text, record" class="detail-link" >
-            <a  href="javascript:;" @click="showDetail(record)">详细</a>
+            <a  href="javascript:;" @click="showDetail(record)">Detail</a>
         </div>
         </a-table>
+
+    <common-modal modalId="modal1"  title="Block detail" >
+      <json-viewer :value="json"></json-viewer>
+    </common-modal>
     </div>
 
 </template>
 
 <script>
 import {mapState} from 'vuex'
+import CommonModal from './common/CommonModal' 
 const columns = [
     {
         title: 'Height',
@@ -51,7 +56,11 @@ export default {
             },
             loading: false,
             columns,
+            json: ''
         }
+    },
+    components: {
+        CommonModal
     },
     mounted(){
         this.$store.dispatch('fetchBlockTotal').then(res => {
@@ -67,6 +76,8 @@ export default {
     methods: {
         showDetail(record){
             console.log(record.json)
+            this.json = record.json;
+            this.$store.commit('SHOW_COMMON_MODAL')
         },
         handleTableChange(pagination, filters, sorter) {
             console.log(pagination)

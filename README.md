@@ -1,5 +1,8 @@
 # solo_chain
 
+This project base on Ontology Blockchain [release](https://github.com/ontio/ontology/releases), run in test mode.
+
+
 > An electron-vue project
 
 #### Build Setup

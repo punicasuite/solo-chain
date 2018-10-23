@@ -60,10 +60,6 @@
 // console.log('appPath: ' + userData)
   const path = require('path')
 
-  const options = {
-    name: 'Solo Chain',
-    // icns: '../../../build/icon.ions'
-  }
   const url = 'http://127.0.0.1:20334'
   const rest = new RestClient(url)
   const columns = [

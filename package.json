@@ -17,9 +17,7 @@
     "package": "npm run pack && electron-builder -mwl",
     "packageLocal": "electron-builder",
     "packageWin": "yarn run pack && electron-builder --win --x64",
-    "packageLin": "yarn run pack && electron-builder --linux --x64",
-    "postinstall": "electron-builder install-app-deps && electron-rebuild --force --module_dir . -w node-hid -v 1.8.4",
-    "electron-rebuild": "electron-rebuild --force --module_dir . -w node-hid"
+    "packageLin": "yarn run pack && electron-builder --linux --x64"
   },
   "build": {
     "productName": "solo-chain",

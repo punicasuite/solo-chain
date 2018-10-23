@@ -9,7 +9,10 @@
 <script>
 import TopNavbar from './components/TopNavbar'
 const sudo = require('sudo-prompt')
-
+const options = {
+    name: 'Solo Chain',
+    // icns: '../../../build/icon.ions'
+  }
 
 var os = require('os').platform()
   export default {
@@ -34,6 +37,10 @@ var os = require('os').platform()
     },
     methods: {
       startNode() {
+        const hasChmod = localStorage.getItem('hasChmod') || false;
+        if(hasChmod !== 'true') {
+          return;
+        }
         this.$store.dispatch('startNode')
         setTimeout(()=>{
           this.$store.dispatch('syncNode')
@@ -54,13 +61,20 @@ var os = require('os').platform()
         if(os === 'win32') {
           return;
         }
-        const command = 'chmod +x ' + this.ontologyPath
+        let ontologyPath = '';
+        if(os === 'liux') { 
+          ontologyPath = __static + '/ontology-linux-amd64'
+        } else if(os === 'darwin') {
+          ontologyPath = __static + '/ontology-darwin-amd64'
+        }
+        const command = 'chmod +x ' + ontologyPath
         
         sudo.exec(command, options, (error, stdout, stderr) => {
           if(error) throw error
           console.log('stdout: ' + stdout)
           localStorage.setItem('hasChmod', true);
           console.log('授权成功。')
+          this.startNode()
         })
       },
     }

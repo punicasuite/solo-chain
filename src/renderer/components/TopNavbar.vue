@@ -158,14 +158,14 @@
             </div>
 
             <div class="start-btns">
-                <a-popconfirm v-if="isRuning" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
+                <a-popconfirm v-if="isRuning" placement="bottom" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
                     <a href="#" class="restart-btn">Stop</a>
                 </a-popconfirm>
             
                 <a href="#" v-if="!isRuning" class="restart-btn" @click="startNode">Start</a>
 
 
-                <a-popconfirm title="Are you sure to reboot?It will delete all your local data." @confirm="confirmReboot" @cancel="cancel" okText="Yes" cancelText="No">
+                <a-popconfirm placement="bottom" title="Are you sure to reboot?It will delete all your local data." @confirm="confirmReboot" @cancel="cancel" okText="Yes" cancelText="No">
                     <a href="#" class="restart-btn">Reboot</a>
                 </a-popconfirm>
             </div>

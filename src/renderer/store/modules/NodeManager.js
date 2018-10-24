@@ -119,8 +119,18 @@ const actions = {
         //clear cache
         sessionStorage.removeItem('Node_PID');
         localStorage.removeItem('Current_Height')
-        // //start node
+        // start node
         dispatch('startNode');
+        //handle sync node
+        const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
+        clearInterval(intervalId);
+        setTimeout(() => {
+            dispatch('syncNode')
+            const intervalId = setInterval(() => {
+                dispatch('syncNode')
+            }, 6000)
+            sessionStorage.setItem('SyncNode_Interval', intervalId)
+        }, 1000)
     },
     async syncNode() {
         console.log('sync node')

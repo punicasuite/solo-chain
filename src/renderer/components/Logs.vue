@@ -9,7 +9,8 @@
     flex: 1;
     width: 100%;
     height: 100%;
-    overflow:scroll;
+    overflow-y:scroll;
+    overflow-x:hidden;
 }
 .logs-container ul {
     list-style:none;

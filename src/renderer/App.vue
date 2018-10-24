@@ -112,7 +112,7 @@ var os = require('os').platform()
     padding: 10px;
     width: 100vw;
     height:100%;
-    overflow: scroll;
+    overflow: hidden;
   }
 
 p {

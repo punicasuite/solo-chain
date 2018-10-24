@@ -66,7 +66,7 @@ var os = require('os').platform()
         }
         
         let ontologyPath = '';
-        if(os === 'liux') { 
+        if(os === 'linux') { 
           ontologyPath = __static + '/ontology-linux-amd64'
         } else if(os === 'darwin') {
           ontologyPath = __static + '/ontology-darwin-amd64'
@@ -77,7 +77,7 @@ var os = require('os').platform()
           if(error) {
             console.log(error)
             this.$message.warning('Please grant the permission.')
-            // this.chmodOntology()
+            this.chmodOntology()
             return;
           }
 

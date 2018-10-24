@@ -196,7 +196,7 @@ export default {
         this.refreshCurrentHeight();
         this.intervalId = setInterval(()=>{
             this.refreshCurrentHeight()
-        }, 3000)
+        }, 2000)
         
 
     },
@@ -206,7 +206,7 @@ export default {
     methods: {
         confirmReboot(){
             this.$store.dispatch('rebootNode')
-            window.location.reload();
+            // window.location.reload();
         },
         cancel() {
 

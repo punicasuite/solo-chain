@@ -129,7 +129,7 @@
       }, 1000)
       this.intervalId = setInterval(()=>{
         this.updateBalance()
-      }, 6000)
+      }, 2000)
     },
     beforeDestroy(){
       clearInterval(this.intervalId)

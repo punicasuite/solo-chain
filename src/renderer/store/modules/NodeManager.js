@@ -45,12 +45,14 @@ const actions = {
         const privateKey = accounts[0].privateKey
         setTimeout(() => {
             dispatch('transferAsset', {from, to:from, asset: 'ONT', amount: 1, privateKey })
-        }, 500)
+        }, 100)
         setTimeout(() => {
             queryClaimableONG(from).then(res => {
-                dispatch('withdrawONG', {from, to: from , amount: res, privateKey});
+                if(parseInt(res)>0) {
+                    dispatch('withdrawONG', {from, to: from , amount: res, privateKey});
+                }
             })
-        }, 500)
+        }, 5000)
     },
     transferSelf({commit}) {
         const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())

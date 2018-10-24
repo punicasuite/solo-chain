@@ -5,19 +5,18 @@
 .accounts-showKey {
   font-size:20px;
 }
+.transfer-item {
+  margin-bottom:15px;
+}
+.transfer-item label {
+  margin-right:15px;
+  font-weight: bold;
+}
 </style>
 
 <template>
   <div id="wrapper">
     <main>
-      <!-- <div>
-        <a-button @click="chmodOntology">授权节点</a-button>
-        <a-button @click="showPrikey">写入私钥文件</a-button>
-        <a-button @click="startNode">启动节点</a-button>
-        <a-button @click="stopNode">结束节点</a-button>
-        <a-button @click="withdrawONG">提取ONG</a-button>
-        <a-button @click="syncBlock">同步区块</a-button>        
-      </div> -->
       <a-table :columns="columns"
                 :rowKey="record => record.address"
                 :dataSource="data"
@@ -26,6 +25,10 @@
             <div slot="balance" slot-scope="text, record" class="accounts-balance">
               <p>ONT: {{record.balance.ont}}</p>
               <p>ONG: {{record.balance.ong}}</p>
+            </div>
+            <div slot="operation" slot-scope="text, record" class="accounts-operation">
+              <a-button @click="transfer(record)">Transfer</a-button>
+              <a-button @click="redeemONG(record)">Redeem ONG</a-button>
             </div>
             <div slot="action" slot-scope="text, record" class="accounts-showKey" >
                 <a  href="javascript:;" @click="showPrikey(record)">
@@ -38,16 +41,47 @@
     <common-modal modalId="modal1" @modalOk="sysPassModalOk" title="Private key">
       <p>{{privateKey}}</p>
     </common-modal>
+
+<!-- for transfer -->
+    <a-modal
+            title="Transfer Asset"
+            v-model="transferVisible"
+            @ok="submitTransfer"
+            @cancel="cancelTransfer"
+            >
+          <div>
+            <div class="transfer-item">
+              <label for="">Asset:</label>
+              <a-select v-model="transferAsset" style="width: 120px" >
+                    <a-select-option value="ONT">ONT</a-select-option>
+                    <a-select-option value="ONG">ONG</a-select-option>
+                </a-select>
+            </div>
+            <div class="transfer-item">
+              <label for="">Sender:</label>
+              <a-input v-model="transferFrom" disabled />
+            </div>
+            <div class="transfer-item">
+              <label for="">Receiver:</label>
+              <a-input v-model="transferTo"></a-input>
+            </div>
+            <div class="transfer-item">
+              <label for="">Amount:</label>
+              <a-input v-model="transferAmount"></a-input>
+            </div>
+          </div>
+        </a-modal>
   </div>
 </template>
 
 <script>
   import * as DB from '../../core/dbService.js'
   import CommonModal from './common/CommonModal' 
+  import {BigNumber} from 'bignumber.js'
   import electron from 'electron'
   import { readFileSync, writeFile } from 'fs';
   import {Wallet, Crypto, OntAssetTxBuilder, RestClient} from 'ontology-ts-sdk'
-  import {delay, getTxtype} from '../../core/util.js'
+  import {delay, getTxtype, queryBalance, queryClaimableONG} from '../../core/util.js'
   var os = require('os').platform()
   console.log(os)
   var execFile = require('child_process').execFile;
@@ -74,6 +108,11 @@
     },
     {
       title: '',
+      key: 'operation',
+      scopedSlots: {customRender: 'operation'}
+    },
+    {
+      title: '',
       key: 'action',
       scopedSlots: {customRender:'action'}
     }
@@ -85,7 +124,12 @@
     },
     mounted(){
       localStorage.removeItem('Node_PID')
-      this.loading = false;
+      setTimeout(()=>{
+        this.updateBalance()
+      }, 1000)
+      this.intervalId = setInterval(()=>{
+        this.updateBalance()
+      }, 6000)
     },
     beforeDestroy(){
       clearInterval(this.intervalId)
@@ -110,7 +154,13 @@
         ontologyPath,
         sysPass: '',
         intervalId: '',
-        privateKey: ''
+        privateKey: '',
+
+        transferVisible: false,
+        transferFrom: '',
+        transferTo: '',
+        transferAmount: '',
+        transferAsset: 'ONT'
       }
     },
     methods: {
@@ -135,7 +185,50 @@
           })
           process2.stdin.write('1\n')
       },
-      
+      async updateBalance() {
+        // this.loading = true;
+        this.data.forEach(async (item) => {
+          const res = await queryBalance(item.address)
+          item.balance = res;
+        })
+      },
+      async redeemONG(record) {
+        const claimable = await queryClaimableONG(record.address);
+        if(parseInt(claimable)>0){
+          const from = record.address;
+          const privateKey = record.privateKey
+          this.$store.dispatch('withdrawONG', {from, to: from , amount: claimable, privateKey}).then(res => {
+            this.$message.success('Redeem ONG succeed.')
+          });
+        } else {
+          this.$message.warning('No claimable ONG for this address.')
+          return;
+        }
+      },
+      transfer(record) {
+        this.transferVisible = true;
+        this.transferFrom = record.address;
+        this.transferPri = record.privateKey;
+      },
+      submitTransfer() {
+        if(!this.transferTo || !this.transferAmount){
+          return;
+        }
+        let amount = 0;
+        if(this.transferAsset === 'ONG') {
+          amount = new BigNumber(this.transferAmount).multipliedBy(1e9).toString();
+        } else {
+          amount = this.transferAmount;
+        }
+        const from = this.transferFrom;
+        this.$store.dispatch('transferAsset', {from, to:this.transferTo, asset: this.transferAsset , amount, privateKey:this.transferPri }).then(res => {
+          this.$message.success('Trasaction has been sent successfully.')
+          this.transferVisible = false;
+        })
+      },
+      cancelTransfer() {
+        this.transferVisible = false;
+      }
     }
   }
 </script>

@@ -53,7 +53,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        margin-right:20px;
+        margin-right: 20px;
     }
     .top-nav-container div p {
         color:rgb(151,151,151);
@@ -63,11 +63,26 @@
         height: 30px;
         padding: 5px;
         color: rgb(255, 255, 255);
-        position: absolute;
-        top: 70px;
         cursor: pointer;
-        right: 10px;
+        margin-right: 10px;
+        width:70px;
+        text-align: center;
     }
+    .start-btns {
+        position: absolute;
+        top:70px;
+        right:10px;
+        flex-direction: row !important;
+        margin-right: 0 !important;
+    }
+    .setting-icon {
+        float: right !important;
+        font-size: 24px !important;
+    }
+    .setting-nav-active {
+        color:#ffffff;
+    }
+
 </style>
 <template>
     <div class="top-nav-container">
@@ -108,6 +123,13 @@
                 </router-link>
             </li>
 
+            <li class="nav-item setting-icon">
+                <router-link :to="{name:'Settings'}" active-class="setting-nav-active" >
+                    <a-icon type="setting" />
+                </router-link>
+            </li>
+
+
         </ul>
         <div class="top-tab-content">
             <div>
@@ -122,10 +144,32 @@
                 <p>Websocket Server:</p>
                 <span>http://127.0.0.1:20335</span>
             </div>
-                <!-- <a-button class="restart-btn" @click="restart">Restart</a-button> -->
-                <a-popconfirm title="Are you sure to restart?" @confirm="confirm" @cancel="cancel" okText="Yes" cancelText="No">
-                    <a href="#" class="restart-btn">Restart</a>
+            <div>
+                <p>Current Height:</p>
+                <span style="text-align:center;">{{height}}</span>
+            </div>
+            <div>
+                <p>Gas Price:</p>
+                <span style="text-align:center;">{{gasPrice}}</span>
+            </div>
+            <div>
+                <p>Gas Limit:</p>
+                <span style="text-align:center;">20000</span>
+            </div>
+
+            <div class="start-btns">
+                <a-popconfirm v-if="isRuning" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
+                    <a href="#" class="restart-btn">Stop</a>
                 </a-popconfirm>
+            
+                <a href="#" v-if="!isRuning" class="restart-btn" @click="startNode">Start</a>
+
+
+                <a-popconfirm title="Are you sure to reboot?It will delete all your local data." @confirm="confirmReboot" @cancel="cancel" okText="Yes" cancelText="No">
+                    <a href="#" class="restart-btn">Reboot</a>
+                </a-popconfirm>
+            </div>
+                
 
         </div>
         
@@ -133,15 +177,57 @@
 </template>
 
 <script>
+import {isNodeRunning} from '../../core/util'
+import {mapState} from 'vuex';
 export default {
     name: 'TopNavbar',
+    data() {
+        return {
+            height:0,
+            isRuning: true
+        }
+    },
+    computed:{
+        ...mapState({
+            gasPrice: state => state.Settings.gasPrice
+        })
+    },
+    mounted() {
+        this.refreshCurrentHeight();
+        this.intervalId = setInterval(()=>{
+            this.refreshCurrentHeight()
+        }, 3000)
+        
+
+    },
+    beforeDestroy() {
+        clearInterval(this.intervalId);
+    },
     methods: {
-        confirm(){
-            this.$store.dispatch('restartNode')
+        confirmReboot(){
+            this.$store.dispatch('rebootNode')
             window.location.reload();
         },
         cancel() {
 
+        },
+        confirmStop() {
+            this.$store.dispatch('stopNode');
+            this.$message.success('The node has beed stoped.')
+            this.isRuning = false;
+        },
+        startNode() {
+            this.$message.success('Starting the node...');
+            this.$store.dispatch('startNode');
+        },
+        refreshCurrentHeight() {
+            let currentHeight = localStorage.getItem('Current_Height') || 0;
+            currentHeight = parseInt(currentHeight)
+            this.height = currentHeight;
+            isNodeRunning().then(res => {
+                if(res) this.isRuning = true;
+                else this.isRuning = false;
+            })
         }
     }
 }

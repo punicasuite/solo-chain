@@ -33,7 +33,8 @@ var os = require('os').platform()
     },
     beforeDestroy() {
       this.stopNode();
-      clearInterval(this.intervalId);
+      const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
+      clearInterval(intervalId);
     },
     methods: {
       startNode() {
@@ -44,9 +45,10 @@ var os = require('os').platform()
         this.$store.dispatch('startNode')
         setTimeout(()=>{
           this.$store.dispatch('syncNode')
-          this.intervalId = setInterval(()=>{
+          const intervalId = setInterval(()=>{
             this.$store.dispatch('syncNode')
           },6000)
+          sessionStorage.setItem('SyncNode_Interval', intervalId)
         }, 1000)
       },
       stopNode() {
@@ -70,7 +72,13 @@ var os = require('os').platform()
         const command = 'chmod +x ' + ontologyPath
         
         sudo.exec(command, options, (error, stdout, stderr) => {
-          if(error) throw error
+          if(error) {
+            console.log(error)
+            this.$message.warning('Please grant the permission.')
+            this.chmodOntology()
+            return;
+          }
+
           console.log('stdout: ' + stdout)
           localStorage.setItem('hasChmod', true);
           console.log('授权成功。')

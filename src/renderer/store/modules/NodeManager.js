@@ -4,7 +4,8 @@ var exec = require('child_process').exec;
 import {rmdir, readFileSync} from 'fs';
 import {OntAssetTxBuilder, RestClient, Crypto, TransactionBuilder} from 'ontology-ts-sdk'
 import * as DB from '../../../core/dbService'
-import { delay, getTxtype } from '../../../core/util.js'
+import { delay, getTxtype, queryClaimableONG } from '../../../core/util.js'
+const gasPrice = localStorage.getItem('GasPrice') ? parseInt(localStorage.getItem('GasPrice')) : 0;
 const state = {
 
 }
@@ -15,18 +16,18 @@ const actions = {
         let nodeProcess;
         let command = '';
         if (os === 'darwin') {
-            command = './ontology-darwin-amd64 --rest --ws --localrpc --gaslimit 20000 --gasprice 0 --testmode -p 1'
+            command = `./ontology-darwin-amd64 --rest --ws --localrpc --gaslimit 20000 --gasprice ${gasPrice} --testmode -p 1`
             nodeProcess = exec(command, {
                 cwd: __static
             })
         } else if (os === 'linux') {
-            command = './ontology-linux-amd64 --rest --ws --localrpc --gaslimit 20000 --gasprice 0 --testmode -p 1'
+            command = `./ontology-linux-amd64 --rest --ws --localrpc --gaslimit 20000 --gasprice ${gasPrice} --testmode -p 1`
             nodeProcess = exec(command, {
                 cwd: __static
             })
         } else if (os === 'win32') {
             command = 'ontology-windows-amd64.exe'
-            nodeProcess = execFile(command, ['-p=1 --gasprice=0', '--testmode'], {
+            nodeProcess = execFile(command, ['-p=1', `--gasprice=${gasPrice}`, '--testmode'], {
                 cwd: __static
             })
         }
@@ -39,40 +40,46 @@ const actions = {
 
         // transfer to itself
 
-        
+        const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
+        const from = accounts[0].address
+        const privateKey = accounts[0].privateKey
         setTimeout(() => {
-            dispatch('transferSelf')
+            dispatch('transferAsset', {from, to:from, asset: 'ONT', amount: 1, privateKey })
+        }, 500)
+        setTimeout(() => {
+            queryClaimableONG(from).then(res => {
+                dispatch('withdrawONG', {from, to: from , amount: res, privateKey});
+            })
         }, 500)
     },
     transferSelf({commit}) {
-        // let command2 = '';
-        // let nodeProcess2;
-        // if (os === 'darwin') {
-        //     command2 = './ontology-darwin-amd64 asset transfer --from 1 --to 1 --amount 1'
-        //     nodeProcess2 = exec(command2, {
-        //         cwd: __static
-        //     })
-        // } else if (os === 'linux') {
-        //     command2 = './ontology-linux-amd64 asset transfer --from 1 --to 1 --amount 1'
-        //     nodeProcess2 = exec(command2, {
-        //         cwd: __static
-        //     })
-        // } else if (os === 'win32') {
-        //     command2 = 'ontology-windows-amd64.exe'
-        //     nodeProcess2 = execFile(command2, ['asset', 'transfer', '--from=1', '--to=1', '--amount=1'], {
-        //         cwd: __static
-        //     })
-        // }
-        // nodeProcess2.stdout.on('data', (data) => {
-        //     console.log(data.toString())
-        //     commit('ADD_LOG_DATA', { data: data.toString() })
-        // })
-        // nodeProcess2.stdin.write('1\n');
         const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
         const account = new Crypto.Address(accounts[0].address)
         const privateKey = new Crypto.PrivateKey(accounts[0].privateKey)
-        const tx = OntAssetTxBuilder.makeTransferTx('ONT', account, account, 1, '0', '20000', account);
+        const tx = OntAssetTxBuilder.makeTransferTx('ONT', account, account, 1, `${gasPrice}`, '20000', account);
         TransactionBuilder.signTransaction(tx, privateKey);
+        const rest = new RestClient('http://127.0.0.1:20334');
+        rest.sendRawTransaction(tx.serialize(), false).then(res => {
+            console.log(res);
+        });
+    },
+    transferAsset({commit}, {from, to, asset, amount, privateKey}) {
+        const fromAddr = new Crypto.Address(from)
+        const toAddr = new Crypto.Address(to)        
+        const pri = new Crypto.PrivateKey(privateKey)
+        const tx = OntAssetTxBuilder.makeTransferTx(asset, fromAddr, toAddr, amount, `${gasPrice}`, '20000', fromAddr);
+        TransactionBuilder.signTransaction(tx, pri);
+        const rest = new RestClient('http://127.0.0.1:20334');
+        rest.sendRawTransaction(tx.serialize(), false).then(res => {
+            console.log(res);
+        });
+    },
+    withdrawONG({commit}, {from, to, amount, privateKey}) {
+        const fromAddr = new Crypto.Address(from)
+        const toAddr = new Crypto.Address(to)
+        const pri = new Crypto.PrivateKey(privateKey)
+        const tx = OntAssetTxBuilder.makeWithdrawOngTx(fromAddr, toAddr, amount, fromAddr, `${gasPrice}`, '20000');
+        TransactionBuilder.signTransaction(tx, pri);
         const rest = new RestClient('http://127.0.0.1:20334');
         rest.sendRawTransaction(tx.serialize(), false).then(res => {
             console.log(res);
@@ -86,9 +93,11 @@ const actions = {
                 console.log(err)
             }
             sessionStorage.removeItem('Node_PID')
+            const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
+            clearInterval(intervalId);
         }
     },
-    restartNode({dispatch, commit}) {
+    rebootNode({dispatch, commit}) {
         dispatch('stopNode')
         //delete db
         dispatch('removeDB');

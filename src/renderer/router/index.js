@@ -39,5 +39,10 @@ export default new Router({
       name: 'Logs',
       component: require('@/components/Logs').default
     },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: require('@/components/Settings').default
+    },
   ]
 })

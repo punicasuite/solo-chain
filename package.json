@@ -73,6 +73,7 @@
   "dependencies": {
     "ant-design-vue": "^1.1.6",
     "axios": "^0.18.0",
+    "bignumber.js": "^7.2.1",
     "nedb": "^1.8.0",
     "ontology-ts-sdk": "^0.9.8",
     "sudo-prompt": "^8.2.3",

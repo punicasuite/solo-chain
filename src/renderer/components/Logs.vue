@@ -19,7 +19,7 @@
 }
 .clear-btn {
     position:fixed;
-    top:90px;
+    top:120px;
     right:10px;
 }
 </style>

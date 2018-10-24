@@ -127,7 +127,7 @@ const actions = {
         currentHeight = parseInt(currentHeight)
         const height = (await rest.getBlockHeight()).Result
         if (currentHeight < height) {
-            for (let i = currentHeight + 1; i <= height; i++) {
+            for (let i = currentHeight; i <= height; i++) {
                 const block = (await rest.getBlockJson(i)).Result
                 if (block && block.Transactions && block.Transactions.length === 0) {
                     continue;

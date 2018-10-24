@@ -55,14 +55,16 @@ var os = require('os').platform()
         this.$store.dispatch('stopNode')
       },
       chmodOntology() {
+        if(os === 'win32') {
+          localStorage.setItem('hasChmod', true);
+          return;
+        }
         const hasChmod = localStorage.getItem('hasChmod') || false;
         if(hasChmod === 'true') {
           console.log('已授权。');
           return;
         }
-        if(os === 'win32') {
-          return;
-        }
+        
         let ontologyPath = '';
         if(os === 'liux') { 
           ontologyPath = __static + '/ontology-linux-amd64'

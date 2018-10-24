@@ -77,7 +77,7 @@ var os = require('os').platform()
           if(error) {
             console.log(error)
             this.$message.warning('Please grant the permission.')
-            this.chmodOntology()
+            // this.chmodOntology()
             return;
           }
 

@@ -6,10 +6,28 @@ import {OntAssetTxBuilder, RestClient, Crypto, TransactionBuilder} from 'ontolog
 import * as DB from '../../../core/dbService'
 import { delay, getTxtype, queryClaimableONG } from '../../../core/util.js'
 const gasPrice = localStorage.getItem('GasPrice') ? parseInt(localStorage.getItem('GasPrice')) : 0;
-const state = {
 
+// local accounts
+const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
+accounts.forEach((item) => {
+    item.balance = {
+        ont: 0,
+        ong: 0
+    }
+})
+const state = {
+    currentHeight: 0,
+    accounts,
+    isNodeRunning : false
 }
-const mutations = {}
+const mutations = {
+    UPDATE_CURRENT_HEIGHT(state, payload) {
+        state.currentHeight = payload.currentHeight;
+    },
+    UPDATE_NODE_RUNNING(state, payload) {
+        state.isNodeRunning = payload.isNodeRunning;
+    }
+}
 
 const actions = {
     startNode({dispatch, commit}) {
@@ -98,7 +116,7 @@ const actions = {
             console.log(res);
         });
     },
-    stopNode() {
+    stopNode({commit}) {
         if (sessionStorage.getItem('Node_PID')) {
             try {
                 process.kill(parseInt(sessionStorage.getItem('Node_PID')))
@@ -109,6 +127,7 @@ const actions = {
             const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
             clearInterval(intervalId);
         }
+        commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
     },
     rebootNode({dispatch, commit}) {
         dispatch('stopNode')
@@ -133,12 +152,19 @@ const actions = {
         // start node
         dispatch('startNode');
     },
-    async syncNode() {
+    async syncNode({commit}) {
         console.log('sync node')
         const rest = new RestClient('http://127.0.0.1:20334');
         let currentHeight = localStorage.getItem('Current_Height') || 0;
         currentHeight = parseInt(currentHeight)
         const height = (await rest.getBlockHeight()).Result
+        if(height){
+            commit('UPDATE_CURRENT_HEIGHT', {currentHeight: height});
+            commit('UPDATE_NODE_RUNNING', {isNodeRunning: true})
+        } else {
+            commit('UPDATE_CURRENT_HEIGHT', { currentHeight: 0 });
+            commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
+        }
         if (currentHeight < height) {
             for (let i = currentHeight; i <= height; i++) {
                 const block = (await rest.getBlockJson(i)).Result

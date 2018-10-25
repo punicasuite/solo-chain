@@ -82,6 +82,7 @@
   import { readFileSync, writeFile } from 'fs';
   import {Wallet, Crypto, OntAssetTxBuilder, RestClient} from 'ontology-ts-sdk'
   import {delay, getTxtype, queryBalance, queryClaimableONG} from '../../core/util.js'
+  import {mapState} from 'vuex'
   var os = require('os').platform()
   console.log(os)
   var execFile = require('child_process').execFile;
@@ -123,7 +124,6 @@
       CommonModal
     },
     mounted(){
-      localStorage.removeItem('Node_PID')
       setTimeout(()=>{
         this.updateBalance()
       }, 1000)
@@ -163,6 +163,11 @@
         transferAsset: 'ONT'
       }
     },
+    computed:{
+      ...mapState({
+        isNodeRunning: state => state.NodeManager.isNodeRunning
+      })
+    },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -186,7 +191,9 @@
           process2.stdin.write('1\n')
       },
       async updateBalance() {
-        // this.loading = true;
+        if(!this.isNodeRunning) {
+          return;
+        }
         this.data.forEach(async (item) => {
           const res = await queryBalance(item.address)
           item.balance = res;

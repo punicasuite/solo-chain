@@ -146,7 +146,7 @@
             </div>
             <div>
                 <p>Current Height:</p>
-                <span style="text-align:center;">{{height}}</span>
+                <span style="text-align:center;">{{currentHeight}}</span>
             </div>
             <div>
                 <p>Gas Price:</p>
@@ -158,11 +158,11 @@
             </div>
 
             <div class="start-btns">
-                <a-popconfirm v-if="isRuning" placement="bottom" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
+                <a-popconfirm v-if="isNodeRunning" placement="bottom" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
                     <a href="#" class="restart-btn">Stop</a>
                 </a-popconfirm>
             
-                <a href="#" v-if="!isRuning" class="restart-btn" @click="startNode">Start</a>
+                <a href="#" v-if="!isNodeRunning" class="restart-btn" @click="startNode">Start</a>
 
 
                 <a-popconfirm placement="bottom" title="Are you sure to reboot?It will delete all your local data." @confirm="confirmReboot" @cancel="cancel" okText="Yes" cancelText="No">
@@ -189,24 +189,16 @@ export default {
     },
     computed:{
         ...mapState({
-            gasPrice: state => state.Settings.gasPrice
+            gasPrice: state => state.Settings.gasPrice,
+            currentHeight: state => state.NodeManager.currentHeight,
+            isNodeRunning: state => state.NodeManager.isNodeRunning
         })
     },
     mounted() {
-        this.refreshCurrentHeight();
-        this.intervalId = setInterval(()=>{
-            this.refreshCurrentHeight()
-        }, 2000)
-        
-
-    },
-    beforeDestroy() {
-        clearInterval(this.intervalId);
     },
     methods: {
         confirmReboot(){
             this.$store.dispatch('rebootNode')
-            // window.location.reload();
         },
         cancel() {
 
@@ -219,15 +211,6 @@ export default {
         startNode() {
             this.$message.success('Starting the node...');
             this.$store.dispatch('startNode');
-        },
-        refreshCurrentHeight() {
-            let currentHeight = localStorage.getItem('Current_Height') || 0;
-            currentHeight = parseInt(currentHeight)
-            this.height = currentHeight;
-            isNodeRunning().then(res => {
-                if(res) this.isRuning = true;
-                else this.isRuning = false;
-            })
         }
     }
 }

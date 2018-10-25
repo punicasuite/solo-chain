@@ -1,7 +1,7 @@
 # solo chain
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/punicasuite/solo-chain/master/image/icon.png"><br><br>
+  <img src="https://raw.githubusercontent.com/punicasuite/solo-chain/master/image/icon.png" height="100" width="100"><br><br>
 </div>
 
 

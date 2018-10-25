@@ -1,4 +1,9 @@
-# solo_chain
+# solo chain
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/punicasuite/solo-chain/master/image/icon.png"><br><br>
+</div>
+
 
 This project base on Ontology Blockchain [release](https://github.com/ontio/ontology/releases), run in test mode.
 

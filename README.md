@@ -1,14 +1,25 @@
-# solo chain
+# Solo chain
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/punicasuite/solo-chain/master/image/icon.png" height="200" width="200"><br><br>
 </div>
 
+Solo chain is One click Blockchain, is your personal blockchain for Ontology development.
 
 This project base on Ontology Blockchain [release](https://github.com/ontio/ontology/releases), run in test mode.
 
 
 > An electron-vue project
+
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/punicasuite/solo-chain/master/image/solo_chain.png" ><br><br>
+</div>
+
+
+## Getting started
+You can download a self-contained prebuilt binary for your platform from this repository's [releases](https://github.com/punicasuite/solo-chain/releases) page.
+
 
 #### Build Setup
 

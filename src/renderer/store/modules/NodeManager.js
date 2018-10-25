@@ -38,8 +38,18 @@ const actions = {
         })
         sessionStorage.setItem('Node_PID', nodeProcess.pid)
 
-        // transfer to itself
+        //handle sync node
+        const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
+        clearInterval(intervalId);
+        setTimeout(() => {
+            dispatch('syncNode')
+            const intervalId = setInterval(() => {
+                dispatch('syncNode')
+            }, 6000)
+            sessionStorage.setItem('SyncNode_Interval', intervalId)
+        }, 1000)
 
+        // transfer to itself
         const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
         const from = accounts[0].address
         const privateKey = accounts[0].privateKey
@@ -53,6 +63,7 @@ const actions = {
                 }
             })
         }, 5000)
+
     },
     transferSelf({commit}) {
         const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
@@ -121,16 +132,6 @@ const actions = {
         localStorage.removeItem('Current_Height')
         // start node
         dispatch('startNode');
-        //handle sync node
-        const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
-        clearInterval(intervalId);
-        setTimeout(() => {
-            dispatch('syncNode')
-            const intervalId = setInterval(() => {
-                dispatch('syncNode')
-            }, 6000)
-            sessionStorage.setItem('SyncNode_Interval', intervalId)
-        }, 1000)
     },
     async syncNode() {
         console.log('sync node')

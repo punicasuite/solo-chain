@@ -33,8 +33,6 @@ var os = require('os').platform()
     },
     beforeDestroy() {
       this.stopNode();
-      const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
-      clearInterval(intervalId);
     },
     methods: {
       startNode() {
@@ -43,13 +41,6 @@ var os = require('os').platform()
           return;
         }
         this.$store.dispatch('startNode')
-        setTimeout(()=>{
-          this.$store.dispatch('syncNode')
-          const intervalId = setInterval(()=>{
-            this.$store.dispatch('syncNode')
-          },6000)
-          sessionStorage.setItem('SyncNode_Interval', intervalId)
-        }, 1000)
       },
       stopNode() {
         this.$store.dispatch('stopNode')

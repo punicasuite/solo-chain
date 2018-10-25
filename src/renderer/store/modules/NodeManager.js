@@ -173,7 +173,7 @@ const actions = {
                             const contractHash = contract.toHexString();
                             const scData = {
                                 contractHash,
-                                name: deploy.name,
+                                name: deploy.Name,
                                 version: deploy.CodeVersion,
                                 author: deploy.Author,
                                 email: deploy.Email,

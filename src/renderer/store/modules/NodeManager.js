@@ -134,8 +134,12 @@ const actions = {
         //delete db
         dispatch('removeDB');
         //delete files
-        const command1 = 'rm -rf '  + 'Chain/';
-        const command2 = 'rm -rf '  + 'Log/';
+        let command1 = 'rm -rf Chain/';
+        let command2 = 'rm -rf Log/';
+        if(os === 'win32') {
+            command1 = 'rmdir /Q /S Chain';
+            command2 = 'rmdir /Q /S Log'
+        }
         exec(command1, {
             cwd: __static
         }, (err, stdout, stderr) => {

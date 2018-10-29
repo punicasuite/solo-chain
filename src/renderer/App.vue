@@ -9,6 +9,7 @@
 <script>
 import TopNavbar from './components/TopNavbar'
 const sudo = require('sudo-prompt')
+const fs = require('fs')
 const options = {
     name: 'Solo Chain',
     // icns: '../../../build/icon.ions'
@@ -62,6 +63,15 @@ var os = require('os').platform()
         } else if(os === 'darwin') {
           ontologyPath = __static + '/ontology-darwin-amd64'
         }
+        ontologyPath = ontologyPath.replace(/(\s+)/g, '\\$1')
+
+        // if(!fs.existsSync(ontologyPath)) {
+        //   localStorage.setItem('hasChmod', true);
+        //   console.log('没有未授权文件。')
+        //   this.startNode() //尝试启动
+        //   return;
+        // }
+
         const command = 'chmod +x ' + ontologyPath
         
         sudo.exec(command, options, (error, stdout, stderr) => {
@@ -75,7 +85,8 @@ var os = require('os').platform()
           console.log('stdout: ' + stdout)
           localStorage.setItem('hasChmod', true);
           console.log('授权成功。')
-          this.startNode()
+          // this.startNode()
+          window.location.reload();
         })
       },
     }

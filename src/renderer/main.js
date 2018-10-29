@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import axios from 'axios'
-
+const path = require('path')
 import App from './App'
 import router from './router'
 import store from './store'
 import { Button, Modal, message, Table, Icon, Popconfirm, Select, Input } from 'ant-design-vue';
 import JsonViewer from 'vue-json-viewer'
+import * as DB from '../core/dbService'
 
 Vue.component(Button.name, Button)
 Vue.component(Modal.name, Modal)
@@ -17,7 +18,6 @@ Vue.component(Select.Option.name, Select.Option)
 Vue.component(Input.name, Input)
 
 Vue.use(JsonViewer)
-
 
 
 Vue.prototype.$message = message

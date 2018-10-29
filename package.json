@@ -14,8 +14,8 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "package": "npm run pack && electron-builder -mwl",
-    "packageLocal": "electron-builder",
+    "package": "yarn run pack && electron-builder -mwl",
+    "packageLocal": "yarn run pack && electron-builder",
     "packageWin": "yarn run pack && electron-builder --win --x64",
     "packageLin": "yarn run pack && electron-builder --linux --x64"
   },
@@ -29,6 +29,12 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json"
+    ],
+    "asarUnpack": [
+      "**/static/ontology-darwin-amd64",
+      "**/static/ontology-windows-amd64.exe",
+      "**/static/privateKey.json",
+      "**/static/wallet.dat"
     ],
     "dmg": {
       "contents": [

@@ -1,12 +1,15 @@
 import { app, shell, BrowserWindow, Menu } from 'electron'
-
+const path = require('path');
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+  
 }
+let node_static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+global.node_static = path.normalize(node_static).replace('app.asar', 'app.asar.unpacked')
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'

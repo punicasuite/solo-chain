@@ -27,7 +27,7 @@ You can download a self-contained prebuilt binary for your platform from this re
 When you launch Solo chain, the screen will show some details about the server, and also list out a number of accounts. Each account is given private key. Having ether automatically in all accounts allows you to focus on developing your application.
 
 
-There are four pages available:
+There are six pages available:
 
 * The Accounts page shows the accounts generated and their balances. This is the default view.
 * The Blocks page shows each block on the blockchain, along with transactions.

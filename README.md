@@ -37,7 +37,7 @@ There are six pages available:
 
 
 ### Settings
-You can change some features of the generated blockchain through the Settings pages.
+You can change gas price through the Settings pages.
 
 
 ### How to build by source code?

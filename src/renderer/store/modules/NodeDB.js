@@ -1,4 +1,5 @@
 import * as DB from '../../../core/dbService'
+import { delay} from '../.././../core/util'
 const pageSize = 10;
 const state = {
     BlockList: [],
@@ -23,6 +24,16 @@ const mutations = {
 }
 
 const actions = {
+    async fetchDataAfterReboot({dispatch}) {
+        dispatch('showLoading');
+        await delay(3000);
+        dispatch('hideLoading')
+            dispatch('fetchBlockList', { page: 1 })
+            dispatch('fetchEventList', { page: 1 })
+            dispatch('fetchTxList', { page: 1 })
+            dispatch('fetchScList', { page: 1 })            
+        
+    },
     async fetchBlockTotal(){
         const total = await DB.dbFind(DB.blockDB, {})
         return total.length;

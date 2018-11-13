@@ -4,7 +4,7 @@ const path = require('path')
 import App from './App'
 import router from './router'
 import store from './store'
-import { Button, Modal, message, Table, Icon, Popconfirm, Select, Input } from 'ant-design-vue';
+import { Button, Modal, message, Table, Icon, Popconfirm, Select, Input, Spin } from 'ant-design-vue';
 import JsonViewer from 'vue-json-viewer'
 import * as DB from '../core/dbService'
 
@@ -16,6 +16,7 @@ Vue.component(Popconfirm.name, Popconfirm)
 Vue.component(Select.name, Select)
 Vue.component(Select.Option.name, Select.Option)
 Vue.component(Input.name, Input)
+Vue.component(Spin.name, Spin);
 
 Vue.use(JsonViewer)
 

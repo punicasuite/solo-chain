@@ -24,6 +24,10 @@
     <div id="wrapper">
         <div class="form">
             <div class="form-item">
+                <label for="" class="form-label">Current version: </label>
+                <label for="" class="form-label">{{version}}</label>
+            </div>
+            <div class="form-item">
                 <label class="form-label">Gas price: </label>
                 <a-select v-model="gasPrice" style="width: 120px" @change="changeGasPrice">
                     <a-select-option value="0">0</a-select-option>
@@ -41,13 +45,15 @@
 </template>
 
 <script>
+import pkg from '../../../package.json'
 export default {
     name: 'Setting',
 
     data() {
         const gasPrice = localStorage.getItem('GasPrice') ? parseInt(localStorage.getItem('GasPrice')) : 0;
         return {
-            gasPrice
+            gasPrice,
+            version: pkg.version
         }
     },
     methods: {

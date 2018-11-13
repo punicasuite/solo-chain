@@ -1,15 +1,13 @@
 // import path, { resolve } from 'path'
 import electron from 'electron'
 const app = electron.remote.app;
-const userData = app.getAppPath()
+const userData = app.getPath('userData')
 console.log('appPath: ' + userData)
-if (!localStorage.getItem('savePath')) {
-    localStorage.setItem('savePath', userData)
-}
+
 //create db
 var Datastore = require('nedb');
 
-const savePath = __static + '/db'
+const savePath = userData
 
 
 const blockDB = new Datastore({ filename: savePath + '/block.db', autoload: true });
@@ -19,7 +17,6 @@ const eventDB = new Datastore({ filename: savePath + '/event.db', autoload: true
 const txDB = new Datastore({ filename: savePath + '/transaction.db', autoload: true });
 
 const scDB = new Datastore({ filename: savePath + '/smartcontract.db', autoload: true });
-
 
 //indexing
 blockDB.ensureIndex({ fieldName: 'hash', unique: true }, function (err) {
@@ -38,10 +35,11 @@ scDB.ensureIndex({ fieldName: 'contractHash', unique: true }, function (err) {
     console.log(err)
 });
 
-blockDB.loadDatabase();
+
 eventDB.loadDatabase();
 txDB.loadDatabase();
 scDB.loadDatabase();
+blockDB.loadDatabase();
 
 const pageSize = 10;
 const dbFind = (db, opt, page) => {

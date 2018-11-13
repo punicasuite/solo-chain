@@ -1,12 +1,12 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
     .top-nav-container {
-        height: 120px;
-        // position: fixed;
+        position: fixed;
         top:0;
         left: 0;
         width:100%;
         background-color:#373a42;
         color: rgb(151,151,151);
+        z-index: 1000;
     }
     .nav-list {
         float:left;
@@ -177,7 +177,6 @@
 </template>
 
 <script>
-import {isNodeRunning} from '../../core/util'
 import {mapState} from 'vuex';
 export default {
     name: 'TopNavbar',

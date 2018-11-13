@@ -1,11 +1,13 @@
 var os = require('os').platform();
 var execFile = require('child_process').execFile;
 var exec = require('child_process').exec;
+const fse = require('fs-extra');
 import {rmdir, readFileSync} from 'fs';
 import {OntAssetTxBuilder, RestClient, Crypto, TransactionBuilder} from 'ontology-ts-sdk'
 import * as DB from '../../../core/dbService'
 import { delay, getTxtype, queryClaimableONG } from '../../../core/util.js'
 const gasPrice = localStorage.getItem('GasPrice') ? parseInt(localStorage.getItem('GasPrice')) : 0;
+const restClient = new RestClient('http://127.0.0.1:20334')
 
 // local accounts
 const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
@@ -31,6 +33,7 @@ const mutations = {
 
 const actions = {
     startNode({dispatch, commit}) {
+        dispatch('showLoading')
         let nodeProcess;
         let command = '';
         if (os === 'darwin') {
@@ -56,16 +59,18 @@ const actions = {
         })
         sessionStorage.setItem('Node_PID', nodeProcess.pid)
 
+
         //handle sync node
-        const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
-        clearInterval(intervalId);
-        setTimeout(() => {
+        const intervalIdOld = parseInt(sessionStorage.getItem('SyncNode_Interval'))
+        clearInterval(intervalIdOld);
+        dispatch('syncNode')
+        const intervalId = setInterval(() => {
             dispatch('syncNode')
-            const intervalId = setInterval(() => {
-                dispatch('syncNode')
-            }, 6000)
-            sessionStorage.setItem('SyncNode_Interval', intervalId)
-        }, 1000)
+        }, 6000)
+        sessionStorage.setItem('SyncNode_Interval', intervalId)
+        // setTimeout(() => {
+            
+        // }, 1000)
 
         // transfer to itself
         const accounts = JSON.parse(readFileSync(__static + '/privateKey.json').toString())
@@ -73,14 +78,15 @@ const actions = {
         const privateKey = accounts[0].privateKey
         setTimeout(() => {
             dispatch('transferAsset', {from, to:from, asset: 'ONT', amount: 1, privateKey })
-        }, 100)
+            dispatch('hideLoading')
+        }, 1000)
         setTimeout(() => {
             queryClaimableONG(from).then(res => {
                 if(parseInt(res)>0) {
                     dispatch('withdrawONG', {from, to: from , amount: res, privateKey});
                 }
             })
-        }, 5000)
+        }, 6000)
 
     },
     transferSelf({commit}) {
@@ -89,9 +95,10 @@ const actions = {
         const privateKey = new Crypto.PrivateKey(accounts[0].privateKey)
         const tx = OntAssetTxBuilder.makeTransferTx('ONT', account, account, 1, `${gasPrice}`, '20000', account);
         TransactionBuilder.signTransaction(tx, privateKey);
-        const rest = new RestClient('http://127.0.0.1:20334');
-        rest.sendRawTransaction(tx.serialize(), false).then(res => {
+        restClient.sendRawTransaction(tx.serialize(), false).then(res => {
             console.log(res);
+        }).catch(err=>{
+            console.log('[transferSelf] error: ' + err)
         });
     },
     transferAsset({commit}, {from, to, asset, amount, privateKey}) {
@@ -100,9 +107,10 @@ const actions = {
         const pri = new Crypto.PrivateKey(privateKey)
         const tx = OntAssetTxBuilder.makeTransferTx(asset, fromAddr, toAddr, amount, `${gasPrice}`, '20000', fromAddr);
         TransactionBuilder.signTransaction(tx, pri);
-        const rest = new RestClient('http://127.0.0.1:20334');
-        rest.sendRawTransaction(tx.serialize(), false).then(res => {
+        restClient.sendRawTransaction(tx.serialize(), false).then(res => {
             console.log(res);
+        }).catch(err => {
+            console.log('[transferAsset] error: ' + err)
         });
     },
     withdrawONG({commit}, {from, to, amount, privateKey}) {
@@ -111,9 +119,10 @@ const actions = {
         const pri = new Crypto.PrivateKey(privateKey)
         const tx = OntAssetTxBuilder.makeWithdrawOngTx(fromAddr, toAddr, amount, fromAddr, `${gasPrice}`, '20000');
         TransactionBuilder.signTransaction(tx, pri);
-        const rest = new RestClient('http://127.0.0.1:20334');
-        rest.sendRawTransaction(tx.serialize(), false).then(res => {
+        restClient.sendRawTransaction(tx.serialize(), false).then(res => {
             console.log(res);
+        }).catch(err => {
+            console.log('[widhtdrawONG] error: '+  err)
         });
     },
     stopNode({commit}) {
@@ -129,39 +138,40 @@ const actions = {
         }
         commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
     },
-    rebootNode({dispatch, commit}) {
-        dispatch('stopNode')
+    async rebootNode({dispatch, commit}) {
+        dispatch('showLoading')
+        await dispatch('stopNode')
         //delete db
-        dispatch('removeDB');
+        await dispatch('removeDB');
         //delete files
-        let command1 = 'rm -rf Chain/';
-        let command2 = 'rm -rf Log/';
-        if(os === 'win32') {
-            command1 = 'rmdir /Q /S Chain';
-            command2 = 'rmdir /Q /S Log'
+        const path1 = __static + '/Chain/'
+        const path2 = __static + '/Log/'
+        try {
+            await fse.remove(path1)
+            await fse.remove(path2)
+        } catch(err) {
+            console.log(err);
+            throw err;
         }
-        exec(command1, {
-            cwd: __static
-        }, (err, stdout, stderr) => {
-            if(err) throw err;
-        })
-        exec(command2, {
-            cwd: __static
-        }, (err, stdout, stderr) => {
-            if (err) throw err;
-        })
+        
         //clear cache
         sessionStorage.removeItem('Node_PID');
         localStorage.removeItem('Current_Height')
         // start node
-        dispatch('startNode');
+        await dispatch('startNode');
+        await dispatch('fetchDataAfterReboot');
+        dispatch('hideLoading');
     },
     async syncNode({commit}) {
         console.log('sync node')
-        const rest = new RestClient('http://127.0.0.1:20334');
         let currentHeight = localStorage.getItem('Current_Height') || 0;
         currentHeight = parseInt(currentHeight)
-        const height = (await rest.getBlockHeight()).Result
+        let height;
+        try {
+            height = (await restClient.getBlockHeight()).Result
+        } catch(err) {
+            console.log('[syncNode] error: ' + err)
+        }
         if(height){
             commit('UPDATE_CURRENT_HEIGHT', {currentHeight: height});
             commit('UPDATE_NODE_RUNNING', {isNodeRunning: true})
@@ -169,13 +179,13 @@ const actions = {
             commit('UPDATE_CURRENT_HEIGHT', { currentHeight: 0 });
             commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
         }
-        if (currentHeight < height) {
+        if (currentHeight <= height) {
             for (let i = currentHeight; i <= height; i++) {
-                const block = (await rest.getBlockJson(i)).Result
+                const block = (await restClient.getBlockJson(i)).Result
                 if (block && block.Transactions && block.Transactions.length === 0) {
                     continue;
                 }
-                const event = (await rest.getSmartCodeEvent(i)).Result
+                const event = (await restClient.getSmartCodeEvent(i)).Result
                 const blockData = {
                     height: i,
                     hash: block['Hash'],
@@ -202,6 +212,7 @@ const actions = {
                             const contract = Crypto.Address.fromVmCode(deploy.Code);
                             const contractHash = contract.toHexString();
                             const scData = {
+                                height: i,
                                 contractHash,
                                 name: deploy.Name,
                                 version: deploy.CodeVersion,
@@ -223,8 +234,8 @@ const actions = {
                 }
 
             }
-            localStorage.setItem('Current_Height', height)
         }
+        localStorage.setItem('Current_Height', height)
     }
 }
 

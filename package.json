@@ -1,6 +1,6 @@
 {
   "name": "solo_chain",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "MickeyWang <1244134672@qq.com>",
   "description": "An electron-vue project",
   "license": null,
@@ -48,7 +48,8 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "icon": "build/icons/icon.icns"
     },
     "win": {
       "target": [
@@ -80,8 +81,10 @@
     "ant-design-vue": "^1.1.6",
     "axios": "^0.18.0",
     "bignumber.js": "^7.2.1",
+    "executable": "^4.1.1",
+    "fs-extra": "^7.0.1",
     "nedb": "^1.8.0",
-    "ontology-ts-sdk": "^0.9.8",
+    "ontology-ts-sdk": "^1.0.5",
     "sudo-prompt": "^8.2.3",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",

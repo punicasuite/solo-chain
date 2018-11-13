@@ -28,6 +28,10 @@ import {mapState} from 'vuex'
 import CommonModal from './common/CommonModal' 
 const columns = [
     {
+        title: 'Height',
+        dataIndex: 'height'
+    },
+    {
         title: 'Contract Hash',
         dataIndex: 'contractHash'
     },

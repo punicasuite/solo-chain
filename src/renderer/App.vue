@@ -1,15 +1,18 @@
 <template>
   <div id="app">
-    <top-navbar></top-navbar>
-
-    <router-view></router-view>
+    <a-spin :spinning="loading">
+      <top-navbar></top-navbar>
+      <router-view></router-view>
+    </a-spin>
   </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import TopNavbar from './components/TopNavbar'
 const sudo = require('sudo-prompt')
 const fs = require('fs')
+const executable = require('executable')
 const options = {
     name: 'Solo Chain',
     // icns: '../../../build/icon.ions'
@@ -23,11 +26,16 @@ var os = require('os').platform()
         intervalId: ''
       }
     },
+    computed:{
+      ...mapState({
+        loading: store => store.LoadingState.loading
+      })
+    },
     components: {
       TopNavbar
     },
     beforeMount(){
-      this.chmodOntology()
+      // this.chmodOntology()
     },
     mounted(){
       this.startNode()
@@ -37,25 +45,29 @@ var os = require('os').platform()
     },
     methods: {
       startNode() {
-        const hasChmod = localStorage.getItem('hasChmod') || false;
-        if(hasChmod !== 'true') {
-          return;
+        // const hasChmod = localStorage.getItem('hasChmod') || false;
+        // if(hasChmod !== 'true') {
+        //   return;
+        // }
+        if(os === 'win32') {
+          this.$store.dispatch('startNode')
+        } else {
+          this.chmodOntology()
         }
-        this.$store.dispatch('startNode')
       },
       stopNode() {
         this.$store.dispatch('stopNode')
       },
-      chmodOntology() {
-        if(os === 'win32') {
-          localStorage.setItem('hasChmod', true);
-          return;
-        }
-        const hasChmod = localStorage.getItem('hasChmod') || false;
-        if(hasChmod === 'true') {
-          console.log('已授权。');
-          return;
-        }
+      async chmodOntology() {
+        // if(os === 'win32') {
+        //   localStorage.setItem('hasChmod', true);
+        //   return;
+        // }
+        // const hasChmod = localStorage.getItem('hasChmod') || false;
+        // if(hasChmod === 'true') {
+        //   console.log('已授权。');
+        //   return;
+        // }
         
         let ontologyPath = '';
         if(os === 'linux') { 
@@ -65,20 +77,19 @@ var os = require('os').platform()
         }
         ontologyPath = ontologyPath.replace(/(\s+)/g, '\\$1')
 
-        // if(!fs.existsSync(ontologyPath)) {
-        //   localStorage.setItem('hasChmod', true);
-        //   console.log('没有未授权文件。')
-        //   this.startNode() //尝试启动
-        //   return;
-        // }
+        const isExec = await executable(ontologyPath)
+        if(isExec) {
+          this.$store.dispatch('startNode')
+          return;
+        }
 
         const command = 'chmod +x ' + ontologyPath
         
         sudo.exec(command, options, (error, stdout, stderr) => {
           if(error) {
             console.log(error)
-            this.$message.warning('Please grant the permission.')
-            this.chmodOntology()
+            this.$message.warning('Some error happens.')
+            // this.chmodOntology()
             return;
           }
 
@@ -86,7 +97,8 @@ var os = require('os').platform()
           localStorage.setItem('hasChmod', true);
           console.log('授权成功。')
           // this.startNode()
-          window.location.reload();
+          // window.location.reload();
+          this.$store.dispatch('startNode')
         })
       },
     }
@@ -115,6 +127,7 @@ var os = require('os').platform()
     width: 100vw;
     height:100%;
     overflow: hidden;
+    padding-top: 106px;
   }
 
 p {

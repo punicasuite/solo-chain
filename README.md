@@ -14,17 +14,16 @@ Solo Chain is a one-click local blockchain deployment service, designed for Onto
 - [Contributing](#contributing)
 
 ## Solo Chain Overview
-A self contained one click private network for the Ontology blockchain. This desktop application makes it easy for developers to quickly setup and manage their own private instance of the Ontology blockchain for rapid development. There are no dependencies to install, source code to compile, or even Docker to setup. Solo chain is packaged with Electron, and provides users with an intuitive GUI interface to setup and mange all aspects of their private Ontology blockchain instance.
+Solo Chain is a desktop application for developers to quickly setup and manage their own private instance of the Ontology blockchain for rapid development. With Solo Chain, there are no dependencies to install, source code to compile, or Docker image to setup. It is packaged with [Electron](http://electronjs.org) and provides users with an intuitive GUI interface to setup and manage all aspects of their private Ontology blockchain instance.
 
-The Solo chain application allows you to:
-- Start, Stop, and Restart your private instance on the fly.
-- Provides all available RPC, REST, and Websocket server interfaces exactly as is present with the Ontology main net and test net
-- Facilitates account to account asset transfers and claims, for quick test environment setup
-- Extremely detailed block, transaction, and event monitoring for direct and convenient debugging
-- Full listings for deployed smart contracts
+The Solo Chain application allows you to:
+- Start, Stop, and Restart your private instance.
+- Provides all of the available RPC, REST, and WebSocket server interfaces present with the Ontology MainNet and TestNet
+- Facilitates account to account asset transfers and claims
+- Extremely detailed block, transaction, and event monitoring for debugging
+- List of deployed smart contracts
 - Verbose network activity logging
-- Customizable network configurations
-
+- Customizable network configurations, such as the ability to adjust the gas price
 
 ## Installation
 - [Download the latest release](https://github.com/punicasuite/solo-chain/releases) version of the Solo chain application for your appropriate development environment (Windows, Mac)

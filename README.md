@@ -7,12 +7,11 @@
 
 Solo Chain is a one-click local blockchain deployment service, designed for Ontology developmen. It is available for both Windows and Mac. Solo Chain is part of the Punica Suite, which you can read more about in the [official documentation](http://dev-docs.ont.io/#/docs-en/Punica/punica).
 
-Contents:
-
-- [Overview](#Overview)
-- [Installation](#Installation)
-- [Getting Started](#Getting-started)
-- [Contribution Guidelines](#Contribution-Guidelines)
+#### Content:
+- [Overview](#solo-chain-overview)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
 
 ## Solo Chain Overview
 A self contained one click private network for the Ontology blockchain. This desktop application makes it easy for developers to quickly setup and manage their own private instance of the Ontology blockchain for rapid development. There are no dependencies to install, source code to compile, or even Docker to setup. Solo chain is packaged with Electron, and provides users with an intuitive GUI interface to setup and mange all aspects of their private Ontology blockchain instance.
@@ -167,8 +166,8 @@ Lastly, clicking on the gear icon in the top right of the screen will bring up t
 
 
 
-# Contributing
-If you happen to find any issues, or have any cool ideas for the next amazing feature for Solo chain, please head over to the [Github](https://github.com/punicasuite/solo-chain) repo, and help us make Solo chain even better.
+## Contributing
+Contributors are welcome to `Solo Chain`. Before beginning, please take a look at our contributing guidelines. You can open an issue by [clicking here](https://github.com/punicasuite/solo-chain/issues/new).
 
 ## Development Setup
 To get Solo chain up and running on your local machine for development on Solo chain, you can:
@@ -179,19 +178,3 @@ To get Solo chain up and running on your local machine for development on Solo c
 This will install and compile all required dependencies and source code, and spin up a local server to host the local codebase at `localhost:9080`. As you make changes to the codebase in the `./src` folder, the application will update with hot reloading.
 
 If you have any issues getting setup, please reach out in the Github issues, or directly on Discord.
-
-## Contribution Guidelines
-
-Please open a pull request with signed-off commits. We appreciate your help! You can also send your codes as emails to the developer mailing list. You're welcomed to join the Ontology mailing list or developer forum.
-
-Please provide detailed submission information when you want to contribute code for this project. The format is as follows:
-
-Header line: explain the commit in one line (use the imperative).
-
-Body of commit message is a few lines of text, explaining things in more detail, possibly giving some background about the issue being fixed, etc.
-
-The body of the commit message can be several paragraphs, and please do proper word-wrap and keep columns shorter than about 74 characters or so. That way "git log" will show things nicely even when it's indented.
-
-Make sure you explain your solution and why you're doing what you're doing, as opposed to describing what you're doing. Reviewers and your future self can read the patch, but might not understand why a particular solution was implemented.
-
-Reported-by: whoever-reported-it Signed-off-by: Your Name youremail@yourhost.com

@@ -48,6 +48,6 @@ This will install and compile all required dependencies and source code, and spi
 For a full guide on using Solo Chain you can read the [getting started guide](./getting-started.md).
 
 ## Contributing
-Contributors are welcome to `Solo Chain`. Before beginning, please take a look at our contributing guidelines. You can open an issue by [clicking here](https://github.com/punicasuite/solo-chain/issues/new).
+Contributors are welcome to `Solo Chain`. Before beginning, please take a look at our [contributing guidelines](./CONTRIBUTING.md). You can open an issue by [clicking here](https://github.com/punicasuite/solo-chain/issues/new).
 
 If you have any issues getting setup, open an issue or reach out in the [Ontology Discord](https://discordapp.com/invite/4TQujHj).

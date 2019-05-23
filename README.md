@@ -26,27 +26,24 @@ The Solo Chain application allows you to:
 - Customizable network configurations, such as the ability to adjust the gas price
 
 ## Installation
-- [Download the latest release](https://github.com/punicasuite/solo-chain/releases) version of the Solo chain application for your appropriate development environment (Windows, Mac)
-- Install the application to your desktop computer
 
+### Download Release
+You can download the latest release of Solo Chain for Windows and Mac in the [release section](https://github.com/punicasuite/solo-chain/releases).
+
+### Build from Source
 If you would like to compile the application yourself from the source repo, you are free to do that as well.
-- Clone down the github repo `git clone git@github.com:punicasuite/solo-chain.git`
+- Clone the repo `git clone git@github.com:punicasuite/solo-chain.git`
 - Install dependencies `yarn install`
-- Compile installer `yarn build`
+- Compile application `yarn build`
 - Navigate to the `release` folder and open the appropriate desktop installer (dmg or exe)
 
-### How to build by source code?
+#### Run for Development
+To run Solo Chain on your local machine for development of Solo Chain:
+- Clone the repo `git clone git@github.com:punicasuite/solo-chain.git`
+- Install dependencies `yarn install`
+- Run application `yarn dev`
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:9080
-npm run dev
-
-# build electron application for production
-npm run build
-```
+This will install and compile all required dependencies and source code, and spin up a local server to host the local codebase at `localhost:9080`. As you make changes to the codebase in the ./src folder, the application will update without reloading.
 
 ## Getting started
 
@@ -168,12 +165,4 @@ Lastly, clicking on the gear icon in the top right of the screen will bring up t
 ## Contributing
 Contributors are welcome to `Solo Chain`. Before beginning, please take a look at our contributing guidelines. You can open an issue by [clicking here](https://github.com/punicasuite/solo-chain/issues/new).
 
-## Development Setup
-To get Solo chain up and running on your local machine for development on Solo chain, you can:
-- Clone down the github repo `git clone git@github.com:punicasuite/solo-chain.git`
-- Install dependencies `yarn install`
-- Compile installer `yarn dev`
-
-This will install and compile all required dependencies and source code, and spin up a local server to host the local codebase at `localhost:9080`. As you make changes to the codebase in the `./src` folder, the application will update with hot reloading.
-
-If you have any issues getting setup, please reach out in the Github issues, or directly on Discord.
+If you have any issues getting setup, open an issue or reach out in the [Ontology Discord](https://discordapp.com/invite/4TQujHj).

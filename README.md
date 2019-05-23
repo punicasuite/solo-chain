@@ -5,7 +5,7 @@
 </div>
 
 
-Solo chain is One click Blockchain, it is your personal blockchain for Ontology development, and available for Windows, Mac, and Linux.Please see the more detailed documentation. [Here](http://dev-docs.ont.io/#/docs-en/Punica/punica)
+Solo Chain is a one-click local blockchain deployment service, designed for Ontology developmen. It is available for both Windows and Mac. Solo Chain is part of the Punica Suite, which you can read more about in the [official documentation](http://dev-docs.ont.io/#/docs-en/Punica/punica).
 
 Contents:
 
@@ -195,7 +195,3 @@ The body of the commit message can be several paragraphs, and please do proper w
 Make sure you explain your solution and why you're doing what you're doing, as opposed to describing what you're doing. Reviewers and your future self can read the patch, but might not understand why a particular solution was implemented.
 
 Reported-by: whoever-reported-it Signed-off-by: Your Name youremail@yourhost.com
-
-
-
-

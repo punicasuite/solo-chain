@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "author": "MickeyWang <1244134672@qq.com>",
   "description": "An electron-vue project",
-  "license": null,
+  "license": "LGPL-3.0",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",

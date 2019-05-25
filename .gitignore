@@ -13,3 +13,4 @@ static/Log/
 static/db/
 release/
 static/temp/
+yarn-error.log

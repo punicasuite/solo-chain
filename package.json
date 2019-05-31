@@ -1,9 +1,9 @@
 {
   "name": "solo_chain",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "MickeyWang <1244134672@qq.com>",
   "description": "An electron-vue project",
-  "license": null,
+  "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -16,7 +16,7 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "package": "yarn run pack && electron-builder -mwl",
     "packageLocal": "yarn run pack && electron-builder",
-    "packageWin": "yarn run pack && electron-builder --win --x64",
+    "packageWin": "yarn run pack && electron-builder --win --x64 --x64 --ia32",
     "packageLin": "yarn run pack && electron-builder --linux --x64"
   },
   "build": {

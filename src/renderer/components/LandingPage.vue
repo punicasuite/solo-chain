@@ -12,6 +12,9 @@
   margin-right:15px;
   font-weight: bold;
 }
+.label {
+  font-weight: bold;
+}
 </style>
 
 <template>
@@ -39,7 +42,9 @@
     </main>
   
     <common-modal modalId="modal1" @modalOk="sysPassModalOk" title="Private key">
-      <p>{{privateKey}}</p>
+      <p>
+       <label for="" class="label">Hex: </label>{{privateKey}}</p>
+      <p><label for="" class="label">WIF: </label> {{wif}}</p>
     </common-modal>
 
 <!-- for transfer -->
@@ -124,6 +129,7 @@
       CommonModal
     },
     mounted(){
+      this.updateBalance()
       setTimeout(()=>{
         this.updateBalance()
       }, 1000)
@@ -155,6 +161,7 @@
         sysPass: '',
         intervalId: '',
         privateKey: '',
+        wif: '',
 
         transferVisible: false,
         transferFrom: '',
@@ -165,7 +172,7 @@
     },
     computed:{
       ...mapState({
-        isNodeRunning: state => state.NodeManager.isNodeRunning
+        nodeStatus: state => state.NodeManager.nodeStatus
       })
     },
     methods: {
@@ -176,6 +183,7 @@
       showPrikey(record){
         this.$store.commit('SHOW_COMMON_MODAL')
         this.privateKey = record.privateKey
+        this.wif = new Crypto.PrivateKey(record.privateKey).serializeWIF()
       },
       sysPassModalOk(modalId) {
         console.log(modalId)
@@ -191,7 +199,7 @@
           process2.stdin.write('1\n')
       },
       async updateBalance() {
-        if(!this.isNodeRunning) {
+        if(!this.nodeStatus) {
           return;
         }
         this.data.forEach(async (item) => {

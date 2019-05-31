@@ -20,20 +20,21 @@ accounts.forEach((item) => {
 const state = {
     currentHeight: 0,
     accounts,
-    isNodeRunning : false
+    nodeStatus : 0 // 0 - stopped; 1 - starting; 2 - running
 }
 const mutations = {
     UPDATE_CURRENT_HEIGHT(state, payload) {
         state.currentHeight = payload.currentHeight;
     },
     UPDATE_NODE_RUNNING(state, payload) {
-        state.isNodeRunning = payload.isNodeRunning;
+        state.nodeStatus = payload.nodeStatus;
     }
 }
 
 const actions = {
     startNode({dispatch, commit}) {
         dispatch('showLoading')
+        commit('UPDATE_NODE_RUNNING', {nodeStatus: 1});
         let nodeProcess;
         let command = '';
         if (os === 'darwin') {
@@ -56,6 +57,10 @@ const actions = {
         nodeProcess.stdout.on('data', (data) => {
             console.log(data.toString())
             commit('ADD_LOG_DATA', { data: data.toString() })
+            if(data.toString().indexOf('open log file') > -1) {// No admin authorization
+                alert('Please run "Solo Chain" as administrator.')
+                return;
+            }
         })
         sessionStorage.setItem('Node_PID', nodeProcess.pid)
 
@@ -63,7 +68,7 @@ const actions = {
         //handle sync node
         const intervalIdOld = parseInt(sessionStorage.getItem('SyncNode_Interval'))
         clearInterval(intervalIdOld);
-        dispatch('syncNode')
+        // dispatch('syncNode')
         const intervalId = setInterval(() => {
             dispatch('syncNode')
         }, 6000)
@@ -136,7 +141,7 @@ const actions = {
             const intervalId = parseInt(sessionStorage.getItem('SyncNode_Interval'))
             clearInterval(intervalId);
         }
-        commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
+        commit('UPDATE_NODE_RUNNING', { nodeStatus: 0 })
     },
     async rebootNode({dispatch, commit}) {
         dispatch('showLoading')
@@ -174,10 +179,10 @@ const actions = {
         }
         if(height){
             commit('UPDATE_CURRENT_HEIGHT', {currentHeight: height});
-            commit('UPDATE_NODE_RUNNING', {isNodeRunning: true})
+            commit('UPDATE_NODE_RUNNING', {nodeStatus: 2})
         } else {
             commit('UPDATE_CURRENT_HEIGHT', { currentHeight: 0 });
-            commit('UPDATE_NODE_RUNNING', { isNodeRunning: false })
+            commit('UPDATE_NODE_RUNNING', { nodeStatus: 0 })
         }
         if (currentHeight <= height) {
             for (let i = currentHeight; i <= height; i++) {

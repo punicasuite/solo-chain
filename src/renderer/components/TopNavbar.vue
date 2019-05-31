@@ -61,11 +61,10 @@
     .restart-btn {
         border: 1px solid rgb(221, 221, 221);
         height: 30px;
-        padding: 5px;
+        padding: 5px 15px;;
         color: rgb(255, 255, 255);
         cursor: pointer;
         margin-right: 10px;
-        width:70px;
         text-align: center;
     }
     .start-btns {
@@ -142,7 +141,7 @@
             </div>
             <div>
                 <p>Websocket Server:</p>
-                <span>http://127.0.0.1:20335</span>
+                <span>ws://127.0.0.1:20335</span>
             </div>
             <div>
                 <p>Current Height:</p>
@@ -158,12 +157,13 @@
             </div>
 
             <div class="start-btns">
-                <a-popconfirm v-if="isNodeRunning" placement="bottom" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
+                <a-popconfirm v-if="nodeStatus === 2" placement="bottom" title="Are you sure to stop the node?" @confirm="confirmStop" @cancel="cancel" okText="Yes" cancelText="No">
                     <a href="#" class="restart-btn">Stop</a>
                 </a-popconfirm>
             
-                <a href="#" v-if="!isNodeRunning" class="restart-btn" @click="startNode">Start</a>
+                <a href="#" v-if="nodeStatus === 1" class="restart-btn" >Starting...</a>
 
+                <a href="#" v-if="nodeStatus === 0" class="restart-btn" @click="startNode">Start</a>
 
                 <a-popconfirm placement="bottom" title="Are you sure to reboot?It will delete all your local data." @confirm="confirmReboot" @cancel="cancel" okText="Yes" cancelText="No">
                     <a href="#" class="restart-btn">Reboot</a>
@@ -190,7 +190,7 @@ export default {
         ...mapState({
             gasPrice: state => state.Settings.gasPrice,
             currentHeight: state => state.NodeManager.currentHeight,
-            isNodeRunning: state => state.NodeManager.isNodeRunning
+            nodeStatus: state => state.NodeManager.nodeStatus
         })
     },
     mounted() {

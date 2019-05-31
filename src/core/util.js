@@ -15,10 +15,10 @@ export function getTxtype(type) {
     }
 }
 
-export function isNodeRunning() {
+export function nodeStatus() {
     const rest = new RestClient('http://127.0.0.1:20334');
     return rest.getBlockHeight().then(res => {
-        return res ? true : false;
+        return res ? 2 : 0;
     }).catch(err => {
         return Promise.resolve(false)
     }) 

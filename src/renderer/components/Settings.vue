@@ -28,6 +28,10 @@
                 <label for="" class="form-label">{{version}}</label>
             </div>
             <div class="form-item">
+                <label for="" class="form-label">Ontology node version: </label>
+                <label for="" class="form-label">1.7.0</label>
+            </div>
+            <div class="form-item">
                 <label class="form-label">Gas price: </label>
                 <a-select v-model="gasPrice" style="width: 120px" @change="changeGasPrice">
                     <a-select-option value="0">0</a-select-option>

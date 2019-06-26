@@ -6,7 +6,7 @@
     <div>
         <a-modal
             :title="title"
-            v-model="visible"
+            :visible="visible"
             @ok="handleOk"
             @cancel="handleCancel"
             >

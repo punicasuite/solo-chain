@@ -22,19 +22,20 @@
 		"isDefault": true,
 		"lock": false
 	}, {
-		"address": "AecaeSEBkt5GcBCxwz1F41TvdjX3dnKBkJ",
-		"enc-alg": "aes-256-gcm",
-		"key": "Cyn5D0jnSgqZY06UiYn8IqqJh6j0CkA6l8uw+GMaZ80O4Nm4xFi9PFlWE5bka9k=",
+		"address": "AYdp4GrhFvHz115fCQuQexL2RfXtWwPoee",
+		"label": "test",
+		"lock": false,
 		"algorithm": "ECDSA",
-		"salt": "yHktDkFvwEcZUhVgIJk9ZA==",
 		"parameters": {
 			"curve": "P-256"
 		},
-		"label": "",
-		"publicKey": "03624058e31c2830320751a62598f726f70496c534906814d9a77363a2bffa95fe",
-		"signatureScheme": "SHA256withECDSA",
+		"key": "FaLj2/4CP3Mw7kDLp4F9hkHDhnbo1D/+VEA6TljTtWhSqm8kaSo5tt2W8eyu9qja",
+		"enc-alg": "aes-256-gcm",
+		"hash": "sha256",
+		"salt": "E7DRE1r8QGxzPnY9AMOXLg==",
 		"isDefault": false,
-		"lock": false
+		"publicKey": "03a5ad912c8f7df57f5528f4067b8f5b69e371097e43d9acb9325a2dbc0578373e",
+		"signatureScheme": "SHA256withECDSA"
 	}, {
 		"address": "AQvZMDecMoCi2y4V6QKdJBtHW1eV7Vbaof",
 		"enc-alg": "aes-256-gcm",

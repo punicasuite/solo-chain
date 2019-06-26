@@ -167,7 +167,7 @@ const actions = {
         await dispatch('fetchDataAfterReboot');
         dispatch('hideLoading');
     },
-    async syncNode({commit}) {
+    async syncNode({commit, dispatch}) {
         console.log('sync node')
         let currentHeight = localStorage.getItem('Current_Height') || 0;
         currentHeight = parseInt(currentHeight)
@@ -176,6 +176,8 @@ const actions = {
             height = (await restClient.getBlockHeight()).Result
         } catch(err) {
             console.log('[syncNode] error: ' + err)
+            console.log('Restart node')
+            await dispatch('startNode')
         }
         if(height){
             commit('UPDATE_CURRENT_HEIGHT', {currentHeight: height});
